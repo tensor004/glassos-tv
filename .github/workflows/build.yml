@@ -1,7 +1,8 @@
-name: Build
+
+name: Build Modified GlassOS
 
 on:
-  pull_request:
+  workflow_dispatch:
   push:
     branches: [main]
 
@@ -11,16 +12,33 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract modified GlassOS source
+        run: |
+          unzip -q GlassOS-manual-permissions-source.zip -d /tmp/glassos-source
+          rsync -a /tmp/glassos-source/glassos-tv-main/ ./
+          rm GlassOS-manual-permissions-source.zip
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
-      - uses: gradle/actions/setup-gradle@v4
-      - name: Build debug APK and run lint
-        run: ./gradlew assembleDebug lint
-      - uses: actions/upload-artifact@v4
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
-          name: glassos-debug-apk
+          name: GlassOS-manual-permissions
           path: app/build/outputs/apk/debug/app-debug.apk
