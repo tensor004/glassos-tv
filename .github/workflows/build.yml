@@ -20,7 +20,7 @@ jobs:
       - name: Extract modified GlassOS source
         run: |
           unzip -q GlassOS-manual-permissions-source-fixed.zip -d /tmp/glassos-source
-          rsync -a /tmp/glassos-source/glassos-tv-main/ ./
+          rsync -a --delete /tmp/glassos-source/glassos-tv-main/ ./
           rm GlassOS-manual-permissions-source-fixed.zip
 
       - name: Set up Java
