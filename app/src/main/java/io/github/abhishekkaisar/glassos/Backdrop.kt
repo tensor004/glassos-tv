@@ -50,7 +50,7 @@ object Blur {
     /** Downscale 8x in halving steps, box-blur (radius 3) three times (close to a Gaussian), then lift saturation a touch. */
     fun makeBackdrop(src: Bitmap): Bitmap {
         var cur = src
-        repeat(3) {
+        repeat(2) {
             val next = Bitmap.createScaledBitmap(cur, (cur.width / 2).coerceAtLeast(1), (cur.height / 2).coerceAtLeast(1), true)
             if (cur !== src) cur.recycle()
             cur = next
