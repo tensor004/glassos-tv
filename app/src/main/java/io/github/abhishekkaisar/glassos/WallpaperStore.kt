@@ -41,7 +41,7 @@ object WallpaperStore {
     fun load(ctx: Context, id: String, w: Int, h: Int): Wallpaper {
         val sharp = if (id.startsWith("file:")) decodeCrop(File(id.removePrefix("file:")), w, h) ?: scene(ctx, "desert", w, h)
         else scene(ctx, id.removePrefix("scene:"), w, h)
-        val blurFile = File(ctx.filesDir, "blur_${key(id)}_${GEN}_${w}x$h.png")
+        val blurFile = File(ctx.filesDir, "blurL_${key(id)}_${GEN}_${w}x$h.png")
         val cached = if (blurFile.exists() && !id.startsWith("file:")) BitmapFactory.decodeFile(blurFile.path) else null
         val blurred = cached ?: Blur.makeBackdrop(sharp).also { b ->
             if (!id.startsWith("file:")) save(b, blurFile, Bitmap.CompressFormat.PNG)
