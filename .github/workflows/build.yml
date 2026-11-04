@@ -19,7 +19,9 @@ jobs:
 
       - name: Extract modified GlassOS source
         run: |
-          unzip -q GlassOS-manual-permissions-source-fixed.zip -d /tmp/glassos-source
+          mv GlassOS-manual-permissions-source-fixed.zip /tmp/glassos-source.zip
+          mkdir -p /tmp/glassos-source
+          unzip -q /tmp/glassos-source.zip -d /tmp/glassos-source
           rsync -a --delete /tmp/glassos-source/glassos-tv-main/ ./
           rm GlassOS-manual-permissions-source-fixed.zip
 
