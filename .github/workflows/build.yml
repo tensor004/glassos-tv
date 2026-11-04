@@ -1,4 +1,3 @@
-
 name: Build Modified GlassOS
 
 on:
@@ -20,10 +19,20 @@ jobs:
       - name: Extract modified GlassOS source
         run: |
           mv GlassOS-manual-permissions-source-fixed.zip /tmp/glassos-source.zip
+          cp -r liquid /tmp/liquid
           mkdir -p /tmp/glassos-source
           unzip -q /tmp/glassos-source.zip -d /tmp/glassos-source
           rsync -a --delete /tmp/glassos-source/glassos-tv-main/ ./
-          
+
+      - name: Apply liquid glass
+        run: |
+          D=app/src/main/java/io/github/abhishekkaisar/glassos
+          cp /tmp/liquid/GlassPainter.kt $D/GlassPainter.kt
+          sed -i '0,/repeat(3) {/s//repeat(2) {/' $D/Backdrop.kt
+          sed -i 's/"blur_/"blurL_/' $D/WallpaperStore.kt
+          grep -q "Sampler" $D/GlassPainter.kt
+          grep -q "repeat(2) {" $D/Backdrop.kt
+          grep -q "blurL_" $D/WallpaperStore.kt
 
       - name: Set up Java
         uses: actions/setup-java@v4
