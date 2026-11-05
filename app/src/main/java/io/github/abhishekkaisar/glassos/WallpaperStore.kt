@@ -13,11 +13,15 @@ import java.io.FileOutputStream
 class Wallpaper(val sharp: Bitmap, val blurred: Bitmap)
 
 object WallpaperStore {
-    private const val GEN = 9
+    private const val GEN = 10
     val scenes = listOf(
         "scene:desert" to "Night desert",
         "scene:ocean" to "Dusk ocean",
         "scene:aurora" to "Aurora",
+        "scene:mountain" to "Snow mountain",
+        "scene:forest" to "Forest mist",
+        "scene:milkyway" to "Milky Way",
+        "scene:coast" to "Ocean cliff",
         "scene:dark" to "Dark"
     )
 
@@ -98,7 +102,6 @@ object WallpaperStore {
             val out = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
             Canvas(out).drawBitmap(src, Rect(sx, sy, sx + cw, sy + ch), Rect(0, 0, w, h), Paint(Paint.FILTER_BITMAP_FLAG))
             src.recycle()
-            // Opaque: HWUI then draws it without blending (the shown slide covers the whole screen).
             out.setHasAlpha(false)
             out
         } catch (e: Throwable) { null }
