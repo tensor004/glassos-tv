@@ -51,6 +51,7 @@ patch("HomeScreen.kt", [
      "    /** Settings > Home style: switches between the Top Shelf home and the Night Scene home. */\n"
      "    fun setNightStyle(on: Boolean) {\n"
      "        NightStyle.setOn(ctx, on)\n"
+     "        if (on && prefs.scene == Prefs.DEFAULT_SCENE) prefs.scene = \"scene:p-night\"\n"
      "        showNightStyle(on)\n"
      "        setWallpaper(prefs.scene, save = false)\n"
      "        updateTime()\n"
@@ -116,6 +117,15 @@ patch("Overlays.kt", [
      '        homeStyleRow.valueView.text = if (NightStyle.isOn(context)) "Night Scene" else "Top Shelf"\n'
      '        cityRow.valueView.text = NightStyle.city(context).ifEmpty { "Not set" }\n'
      '        soundRow.valueView.text = if (act.prefs.sound) "On" else "Off"\n'),
+])
+
+patch("WallpaperStore.kt", [
+    ('        "scene:dark" to "Dark"\n    )',
+     '        "scene:dark" to "Dark"\n    ) + NightPhotos.ALL'),
+    ("        val b = WallpaperGen.render(name, w, h)\n",
+     "        val b = NightPhotos.render(ctx, name, w, h)\n"),
+    ("        val b = WallpaperGen.render(name, w * 2, h * 2)\n",
+     "        val b = NightPhotos.render(ctx, name, w * 2, h * 2)\n"),
 ])
 
 print("Night Scene home: all edits applied")

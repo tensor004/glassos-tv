@@ -1,0 +1,3 @@
+Backgrounds copied from the open-source tvOS Launcher project (https://github.com/techgenius1/tvOS-Launcher),
+which is licensed under Apache-2.0. That project does not state a separate licence for these images.
+For personal use on your own TV. Do not publish or redistribute this app with these images without checking.

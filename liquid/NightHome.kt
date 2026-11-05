@@ -2,6 +2,7 @@ package io.github.abhishekkaisar.glassos
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.BitmapShader
 import android.graphics.Canvas
 import android.graphics.Color
@@ -30,8 +31,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.Executors
-import android.graphics.Outline
-import android.view.ViewOutlineProvider
 
 /**
  * The Night Scene home style: a still wallpaper, a greeting with the date and weather, a very large clock and
@@ -105,18 +104,13 @@ class BigClock(ctx: Context) : View(ctx) {
     }
 
     override fun onSizeChanged(w: Int, h: Int, ow: Int, oh: Int) {
-    p.shader = LinearGradient(
-        0f, 0f, 0f, h.toFloat(),
-        0xF8FFFFFF.toInt(),
-        0xBFE6D2F4.toInt(),
-        Shader.TileMode.CLAMP
-    )
-    p.textSize = h * 0.70f
-}
+        p.shader = LinearGradient(0f, 0f, 0f, h.toFloat(), 0xF8FFFFFF.toInt(), 0xBFE6D2F4.toInt(), Shader.TileMode.CLAMP)
+        p.textSize = h * 1.12f
+    }
 
- override fun onDraw(c: Canvas) {
-    c.drawText(text, width / 2f, height * 0.76f, p)
- }
+    override fun onDraw(c: Canvas) {
+        c.drawText(text, width / 2f, height * 0.86f, p)
+    }
 }
 
 /** A square app icon in the dock: rounded, a white ring and a small spring when focused. */
@@ -143,7 +137,7 @@ class DockIcon(ctx: Context, private val size: Int, val label: String, val pkg: 
         isClickable = true
         setOnClickListener { onClick?.invoke() }
         if (gear) fill.shader = LinearGradient(0f, 0f, size.toFloat(), size.toFloat(), 0xFF5C5C61.toInt(), 0xFF2E2E31.toInt(), Shader.TileMode.CLAMP)
-        else fill.color = 0x33FFFFFF
+        else fill.color = 0xFF2B2B30.toInt()
     }
 
     private fun buildShader() {
@@ -168,7 +162,7 @@ class DockIcon(ctx: Context, private val size: Int, val label: String, val pkg: 
     override fun onDraw(c: Canvas) {
         val r = size * 0.23f
         rect.set(0f, 0f, size.toFloat(), size.toFloat())
-        if (gear || art.shader == null) c.drawRoundRect(rect, r, r, fill)
+        c.drawRoundRect(rect, r, r, fill)
         if (gear) Glyphs.draw(c, Glyph.GEAR, size / 2f, size / 2f, size * 0.46f, Color.WHITE, glyph)
         else if (art.shader != null) c.drawRoundRect(rect, r, r, art)
         val f = focus.amount
@@ -245,45 +239,33 @@ class NightHome(private val home: HomeScreen) : FrameLayout(home.ctx) {
     private val clock = BigClock(context)
     private val iconPx = (sh * 108 / 1080)
     private val gapPx = (sh * 20 / 1080)
-    private val padH = (sh * 60 / 1080)
+    private val padH = (sh * 34 / 1080)
     private val barH = (sh * 144 / 1080)
     private val barMaxW = (sw * 75 / 100)
 
     private val bar = GlassBox(context, sh * 44f / 1080f).apply {
-    glass.tint = 0.04f
-    glass.dark = 0.30f
-    glass.sheen = 0.06f
-    glass.highlight = 0.55f
-    glass.border = 0.12f
-    glass.cacheStatic = true
-    shadowAlpha = 0.22f
-
-    clipChildren = true
-    clipToPadding = true
-    clipToOutline = true
-    outlineProvider = object : ViewOutlineProvider() {
-        override fun getOutline(view: View, outline: Outline) {
-            outline.setRoundRect(
-                0, 0, view.width, view.height,
-                sh * 44f / 1080f
-            )
-        }
+        glass.tint = 0.04f
+        glass.dark = 0.30f
+        glass.sheen = 0.06f
+        glass.highlight = 0.55f
+        glass.border = 0.12f
+        glass.cacheStatic = true
+        shadowAlpha = 0.22f
     }
-}
     private val scroll = DockScroll(context).apply {
         isHorizontalScrollBarEnabled = false
         isHorizontalFadingEdgeEnabled = false
         setFadingEdgeLength(0)
         overScrollMode = View.OVER_SCROLL_NEVER
         isFillViewport = true
-        clipChildren = true
-        clipToPadding = true
+        clipChildren = false
+        clipToPadding = false
     }
     private val row = LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER
-        clipChildren = true
-        clipToPadding = true
+        clipChildren = false
+        clipToPadding = false
     }
     private val tooltip = TextView(context).apply {
         textSize = 15f
@@ -308,9 +290,7 @@ class NightHome(private val home: HomeScreen) : FrameLayout(home.ctx) {
         greeting.addView(hello, LinearLayout.LayoutParams(-2, -2))
         greeting.addView(dateLine, LinearLayout.LayoutParams(-2, -2).apply { topMargin = dpi(2f) })
         addView(greeting, LayoutParams(-2, -2, Gravity.TOP or Gravity.CENTER_HORIZONTAL).apply { topMargin = sh * 50 / 1080 })
-        addView(clock, LayoutParams(sw / 2, sh * 300 / 1080, Gravity.TOP or Gravity.CENTER_HORIZONTAL).apply {
-    topMargin = sh * 220 / 1080
-})
+        addView(clock, LayoutParams(sw / 2, sh * 340 / 1080, Gravity.TOP or Gravity.CENTER_HORIZONTAL).apply { topMargin = sh * 128 / 1080 })
 
         row.setPadding(padH, 0, padH, 0)
         scroll.addView(row, FrameLayout.LayoutParams(-2, -1))
@@ -381,7 +361,7 @@ class NightHome(private val home: HomeScreen) : FrameLayout(home.ctx) {
         val missing = ArrayList<Pair<DockIcon, String>>()
         for (e in order) {
             val icon = DockIcon(context, iconPx, e.label, e.pkg)
-            if (!e.isBanner && e.art != null) icon.bitmap = e.art else missing.add(icon to e.pkg)
+            missing.add(icon to e.pkg)
             icon.onClick = { home.launch(e.pkg, icon) }
             wire(icon)
             addIcon(icon)
@@ -410,48 +390,17 @@ class NightHome(private val home: HomeScreen) : FrameLayout(home.ctx) {
     }
 
     private fun wire(icon: DockIcon) {
-    icon.onFocus = { gained ->
-        if (gained) {
-            focusedIcon = icon
-            lastFocus = icon
-            showTooltip(icon)
-
-            // Keep the focused icon fully visible.
-            scroll.post {
-                revealFocusedIcon(icon)
+        icon.onFocus = { gained ->
+            if (gained) {
+                focusedIcon = icon
+                lastFocus = icon
+                showTooltip(icon)
+            } else if (focusedIcon === icon) {
+                focusedIcon = null
+                tooltip.visibility = View.INVISIBLE
             }
-        } else if (focusedIcon === icon) {
-            focusedIcon = null
-            tooltip.visibility = View.INVISIBLE
         }
     }
-}
-    private fun revealFocusedIcon(icon: DockIcon) {
-    if (icon.parent !== row || scroll.width == 0) return
-
-    val extra = (iconPx * 0.16f).toInt() + dp(6f).toInt()
-
-    val iconLeft = row.left + icon.left
-    val iconRight = iconLeft + icon.width
-
-    val visibleLeft = scroll.scrollX
-    val visibleRight = visibleLeft + scroll.width
-
-    var targetX = visibleLeft
-
-    if (iconLeft - extra < visibleLeft) {
-        targetX = iconLeft - extra
-    } else if (iconRight + extra > visibleRight) {
-        targetX = iconRight + extra - scroll.width
-    }
-
-    val maxScroll = (row.width - scroll.width).coerceAtLeast(0)
-    targetX = targetX.coerceIn(0, maxScroll)
-
-    if (targetX != scroll.scrollX) {
-        scroll.smoothScrollTo(targetX, 0)
-    }
-}
 
     /** Apps whose art is a wide banner get their launcher icon instead, loaded off the main thread. */
     private fun loadIcons(order: List<AppEntry>, missing: List<Pair<DockIcon, String>>) {
@@ -611,4 +560,34 @@ class CityPrompt(private val home: HomeScreen) : FrameLayout(home.ctx) {
         onClosed = null
         c?.invoke()
     }
+}
+
+/**
+ * Photo backgrounds that ship inside the app (assets/night/*.jpg). They appear in Settings > Background next to the
+ * drawn scenes, with ids like "scene:p-night". If a file is missing the desert scene is drawn instead.
+ */
+object NightPhotos {
+    val ALL = listOf(
+        "scene:p-night" to "Lake dusk",
+        "scene:p-dawn" to "Misty dawn",
+        "scene:p-golden" to "Golden volcano",
+        "scene:p-fog" to "Pine fog",
+        "scene:p-water" to "Clear lake"
+    )
+
+    fun render(ctx: Context, name: String, w: Int, h: Int): Bitmap {
+        if (name.startsWith("p-")) photo(ctx, name.removePrefix("p-"), w, h)?.let { return it }
+        return WallpaperGen.render(if (name.startsWith("p-")) "desert" else name, w, h)
+    }
+
+    private fun photo(ctx: Context, key: String, w: Int, h: Int): Bitmap? = try {
+        val src = ctx.assets.open("night/$key.jpg").use { BitmapFactory.decodeStream(it) }
+        if (src == null) null
+        else if (src.width == w && src.height == h) src
+        else {
+            val out = Bitmap.createScaledBitmap(src, w, h, true)
+            if (out !== src) src.recycle()
+            out
+        }
+    } catch (e: Throwable) { null }
 }
