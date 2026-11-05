@@ -258,8 +258,8 @@ class NightHome(private val home: HomeScreen) : FrameLayout(home.ctx) {
         setFadingEdgeLength(0)
         overScrollMode = View.OVER_SCROLL_NEVER
         isFillViewport = true
-        clipChildren = false
-        clipToPadding = false
+        clipChildren = true
+        clipToPadding = true
     }
     private val row = LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
@@ -290,7 +290,7 @@ class NightHome(private val home: HomeScreen) : FrameLayout(home.ctx) {
         greeting.addView(hello, LinearLayout.LayoutParams(-2, -2))
         greeting.addView(dateLine, LinearLayout.LayoutParams(-2, -2).apply { topMargin = dpi(2f) })
         addView(greeting, LayoutParams(-2, -2, Gravity.TOP or Gravity.CENTER_HORIZONTAL).apply { topMargin = sh * 50 / 1080 })
-        addView(clock, LayoutParams(sw / 2, sh * 340 / 1080, Gravity.TOP or Gravity.CENTER_HORIZONTAL).apply { topMargin = sh * 128 / 1080 })
+        addView(clock, LayoutParams(sw / 2, sh * 320 / 1080, Gravity.TOP or Gravity.CENTER_HORIZONTAL).apply { topMargin = sh * 200 / 1080 })
 
         row.setPadding(padH, 0, padH, 0)
         scroll.addView(row, FrameLayout.LayoutParams(-2, -1))
@@ -563,7 +563,7 @@ class CityPrompt(private val home: HomeScreen) : FrameLayout(home.ctx) {
 }
 
 /**
- * Photo backgrounds that ship inside the app (assets/night folder). They appear in Settings > Background next to the
+ * Photo backgrounds that ship inside the app (assets/night/*.jpg). They appear in Settings > Background next to the
  * drawn scenes, with ids like "scene:p-night". If a file is missing the desert scene is drawn instead.
  */
 object NightPhotos {
