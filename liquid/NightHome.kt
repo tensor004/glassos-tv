@@ -429,7 +429,7 @@ class NightHome(private val home: HomeScreen) : FrameLayout(home.ctx) {
     private fun revealFocusedIcon(icon: DockIcon) {
     if (icon.parent !== row || scroll.width == 0) return
 
-    val extra = (iconPx * 0.16f).toInt() + dp(6f)
+    val extra = (iconPx * 0.16f).toInt() + dp(6f).toInt()
 
     val iconLeft = row.left + icon.left
     val iconRight = iconLeft + icon.width
