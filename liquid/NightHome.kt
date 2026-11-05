@@ -563,7 +563,7 @@ class CityPrompt(private val home: HomeScreen) : FrameLayout(home.ctx) {
 }
 
 /**
- * Photo backgrounds that ship inside the app (assets/night/*.jpg). They appear in Settings > Background next to the
+ * Photo backgrounds that ship inside the app (assets/night folder). They appear in Settings > Background next to the
  * drawn scenes, with ids like "scene:p-night". If a file is missing the desert scene is drawn instead.
  */
 object NightPhotos {
