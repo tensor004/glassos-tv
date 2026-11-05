@@ -251,6 +251,7 @@ class NightHome(private val home: HomeScreen) : FrameLayout(home.ctx) {
         glass.border = 0.12f
         glass.cacheStatic = true
         shadowAlpha = 0.22f
+        clipChildren = true
     }
     private val scroll = DockScroll(context).apply {
         isHorizontalScrollBarEnabled = false
@@ -563,7 +564,7 @@ class CityPrompt(private val home: HomeScreen) : FrameLayout(home.ctx) {
 }
 
 /**
- * Photo backgrounds that ship inside the app (assets/night folder). They appear in Settings > Background next to the
+ * Photo backgrounds that ship inside the app (the assets/night folder). They appear in Settings > Background next to the
  * drawn scenes, with ids like "scene:p-night". If a file is missing the desert scene is drawn instead.
  */
 object NightPhotos {
