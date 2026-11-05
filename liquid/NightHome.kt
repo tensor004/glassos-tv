@@ -30,6 +30,8 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.Executors
+import android.graphics.Outline
+import android.view.ViewOutlineProvider
 
 /**
  * The Night Scene home style: a still wallpaper, a greeting with the date and weather, a very large clock and
@@ -248,22 +250,34 @@ class NightHome(private val home: HomeScreen) : FrameLayout(home.ctx) {
     private val barMaxW = (sw * 75 / 100)
 
     private val bar = GlassBox(context, sh * 44f / 1080f).apply {
-        glass.tint = 0.04f
-        glass.dark = 0.30f
-        glass.sheen = 0.06f
-        glass.highlight = 0.55f
-        glass.border = 0.12f
-        glass.cacheStatic = true
-        shadowAlpha = 0.22f
+    glass.tint = 0.04f
+    glass.dark = 0.30f
+    glass.sheen = 0.06f
+    glass.highlight = 0.55f
+    glass.border = 0.12f
+    glass.cacheStatic = true
+    shadowAlpha = 0.22f
+
+    clipChildren = true
+    clipToPadding = true
+    clipToOutline = true
+    outlineProvider = object : ViewOutlineProvider() {
+        override fun getOutline(view: View, outline: Outline) {
+            outline.setRoundRect(
+                0, 0, view.width, view.height,
+                sh * 44f / 1080f
+            )
+        }
     }
+}
     private val scroll = DockScroll(context).apply {
         isHorizontalScrollBarEnabled = false
         isHorizontalFadingEdgeEnabled = false
         setFadingEdgeLength(0)
         overScrollMode = View.OVER_SCROLL_NEVER
         isFillViewport = true
-        clipChildren = false
-        clipToPadding = false
+        clipChildren = true
+        clipToPadding = true
     }
     private val row = LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
