@@ -255,8 +255,8 @@ class NightHome(private val home: HomeScreen) : FrameLayout(home.ctx) {
     }
     private val scroll = DockScroll(context).apply {
         isHorizontalScrollBarEnabled = false
-        isHorizontalFadingEdgeEnabled = false
-        setFadingEdgeLength(0)
+        isHorizontalFadingEdgeEnabled = true
+        setFadingEdgeLength(sh * 34 / 1080)
         overScrollMode = View.OVER_SCROLL_NEVER
         isFillViewport = true
         clipChildren = true
