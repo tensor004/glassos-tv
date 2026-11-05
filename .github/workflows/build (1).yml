@@ -1,0 +1,66 @@
+name: Build Modified GlassOS
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract modified GlassOS source
+        run: |
+          mv GlassOS-manual-permissions-source-fixed.zip /tmp/glassos-source.zip
+          cp -r liquid /tmp/liquid
+          mkdir -p /tmp/glassos-source
+          unzip -q /tmp/glassos-source.zip -d /tmp/glassos-source
+          rsync -a --delete /tmp/glassos-source/glassos-tv-main/ ./
+
+      - name: Apply liquid glass and Night Scene
+        run: |
+          D=app/src/main/java/io/github/abhishekkaisar/glassos
+          cp /tmp/liquid/GlassPainter.kt $D/GlassPainter.kt
+          sed -i '0,/repeat(3) {/s//repeat(2) {/' $D/Backdrop.kt
+          sed -i 's/"blur_/"blurL_/' $D/WallpaperStore.kt
+          cp /tmp/liquid/NightHome.kt $D/NightHome.kt
+          python3 /tmp/liquid/apply_night.py .
+          python3 /tmp/liquid/apply_cc.py .
+          mkdir -p app/src/main/assets/night
+          cp /tmp/liquid/*.jpg app/src/main/assets/night/
+          grep -q "Sampler" $D/GlassPainter.kt
+          grep -q "repeat(2) {" $D/Backdrop.kt
+          grep -q "blurL_" $D/WallpaperStore.kt
+          grep -q "class NightHome" $D/NightHome.kt
+          grep -q "night.prompt" $D/HomeScreen.kt
+          grep -q "homeStyleRow" $D/Overlays.kt
+          grep -q "NightPhotos" $D/WallpaperStore.kt
+          grep -q "drawPill" $D/ControlCenter.kt
+          test "$(ls app/src/main/assets/night | wc -l)" -ge 5
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: GlassOS-manual-permissions
+          path: app/build/outputs/apk/debug/app-debug.apk
