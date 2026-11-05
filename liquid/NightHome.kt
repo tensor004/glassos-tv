@@ -410,17 +410,48 @@ class NightHome(private val home: HomeScreen) : FrameLayout(home.ctx) {
     }
 
     private fun wire(icon: DockIcon) {
-        icon.onFocus = { gained ->
-            if (gained) {
-                focusedIcon = icon
-                lastFocus = icon
-                showTooltip(icon)
-            } else if (focusedIcon === icon) {
-                focusedIcon = null
-                tooltip.visibility = View.INVISIBLE
+    icon.onFocus = { gained ->
+        if (gained) {
+            focusedIcon = icon
+            lastFocus = icon
+            showTooltip(icon)
+
+            // Keep the focused icon fully visible.
+            scroll.post {
+                revealFocusedIcon(icon)
             }
+        } else if (focusedIcon === icon) {
+            focusedIcon = null
+            tooltip.visibility = View.INVISIBLE
         }
     }
+}
+    private fun revealFocusedIcon(icon: DockIcon) {
+    if (icon.parent !== row || scroll.width == 0) return
+
+    val extra = (iconPx * 0.16f).toInt() + dp(6f)
+
+    val iconLeft = row.left + icon.left
+    val iconRight = iconLeft + icon.width
+
+    val visibleLeft = scroll.scrollX
+    val visibleRight = visibleLeft + scroll.width
+
+    var targetX = visibleLeft
+
+    if (iconLeft - extra < visibleLeft) {
+        targetX = iconLeft - extra
+    } else if (iconRight + extra > visibleRight) {
+        targetX = iconRight + extra - scroll.width
+    }
+
+    val maxScroll = (row.width - scroll.width).coerceAtLeast(0)
+    targetX = targetX.coerceIn(0, maxScroll)
+
+    if (targetX != scroll.scrollX) {
+        scroll.smoothScrollTo(targetX, 0)
+    }
+}
 
     /** Apps whose art is a wide banner get their launcher icon instead, loaded off the main thread. */
     private fun loadIcons(order: List<AppEntry>, missing: List<Pair<DockIcon, String>>) {
