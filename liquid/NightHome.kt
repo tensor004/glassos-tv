@@ -103,13 +103,18 @@ class BigClock(ctx: Context) : View(ctx) {
     }
 
     override fun onSizeChanged(w: Int, h: Int, ow: Int, oh: Int) {
-        p.shader = LinearGradient(0f, 0f, 0f, h.toFloat(), 0xF8FFFFFF.toInt(), 0xBFE6D2F4.toInt(), Shader.TileMode.CLAMP)
-        p.textSize = h * 1.12f
-    }
+    p.shader = LinearGradient(
+        0f, 0f, 0f, h.toFloat(),
+        0xF8FFFFFF.toInt(),
+        0xBFE6D2F4.toInt(),
+        Shader.TileMode.CLAMP
+    )
+    p.textSize = h * 0.70f
+}
 
-    override fun onDraw(c: Canvas) {
-        c.drawText(text, width / 2f, height * 0.86f, p)
-    }
+ override fun onDraw(c: Canvas) {
+    c.drawText(text, width / 2f, height * 0.76f, p)
+ }
 }
 
 /** A square app icon in the dock: rounded, a white ring and a small spring when focused. */
@@ -263,8 +268,8 @@ class NightHome(private val home: HomeScreen) : FrameLayout(home.ctx) {
     private val row = LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER
-        clipChildren = false
-        clipToPadding = false
+        clipChildren = true
+        clipToPadding = true
     }
     private val tooltip = TextView(context).apply {
         textSize = 15f
@@ -289,7 +294,9 @@ class NightHome(private val home: HomeScreen) : FrameLayout(home.ctx) {
         greeting.addView(hello, LinearLayout.LayoutParams(-2, -2))
         greeting.addView(dateLine, LinearLayout.LayoutParams(-2, -2).apply { topMargin = dpi(2f) })
         addView(greeting, LayoutParams(-2, -2, Gravity.TOP or Gravity.CENTER_HORIZONTAL).apply { topMargin = sh * 50 / 1080 })
-        addView(clock, LayoutParams(sw / 2, sh * 340 / 1080, Gravity.TOP or Gravity.CENTER_HORIZONTAL).apply { topMargin = sh * 128 / 1080 })
+        addView(clock, LayoutParams(sw / 2, sh * 300 / 1080, Gravity.TOP or Gravity.CENTER_HORIZONTAL).apply {
+    topMargin = sh * 220 / 1080
+})
 
         row.setPadding(padH, 0, padH, 0)
         scroll.addView(row, FrameLayout.LayoutParams(-2, -1))
