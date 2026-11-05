@@ -245,7 +245,7 @@ class NightHome(private val home: HomeScreen) : FrameLayout(home.ctx) {
     private val clock = BigClock(context)
     private val iconPx = (sh * 108 / 1080)
     private val gapPx = (sh * 20 / 1080)
-    private val padH = (sh * 34 / 1080)
+    private val padH = (sh * 60 / 1080)
     private val barH = (sh * 144 / 1080)
     private val barMaxW = (sw * 75 / 100)
 
