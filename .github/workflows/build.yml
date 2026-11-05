@@ -29,6 +29,7 @@ jobs:
         run: |
           D=app/src/main/java/io/github/abhishekkaisar/glassos
           cp /tmp/liquid/GlassPainter.kt $D/GlassPainter.kt
+          cp /tmp/liquid/WallpaperGen.kt "$D/WallpaperGen.kt"
           sed -i '0,/repeat(3) {/s//repeat(2) {/' $D/Backdrop.kt
           sed -i 's/"blur_/"blurL_/' $D/WallpaperStore.kt
           cp /tmp/liquid/NightHome.kt $D/NightHome.kt
